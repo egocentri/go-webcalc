@@ -1,15 +1,15 @@
 # go-webcalc
 # Arithmetic Expression Calculator
 A simple Go web service to evaluate arithmetic expressions. It supports addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`), and parentheses().
-
+Для запуска проекта выполните следующие шаги:
 1. Склонируйте репозиторий
 Откройте терминал и выполните команду:
-git clone -b main https://github.com/egocentri/go-webcalc.git
-cd go-webcalc
+```git clone -b main https://github.com/egocentri/go-webcalc.git
+cd go-webcalc```
 
 2. Перейдите в директорию с файлом webcalc
 Убедитесь, что файл webcalc находится в рабочей директории. Используйте команду:
-ls
+```ls```
 Если файл есть, переходите к следующему шагу.
 
 3. Запустите проект
@@ -22,11 +22,11 @@ Server is running on port 8080
 Теперь можно отправлять запросы к серверу. Например, с помощью curl:
 Examples
 Valid Request
-curl --location 'http://localhost:8080/api/v1/calculate' \
+curl ```--location 'http://localhost:8080/api/v1/calculate' \
 --header 'Content-Type: application/json' \
 --data '{
   "expression": "2+2*2"
-}'
+}'```
 Response:
 {
   "result": "6"
