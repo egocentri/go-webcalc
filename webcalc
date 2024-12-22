@@ -1,0 +1,182 @@
+package main
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"strings"
+	"strconv"
+)
+
+type parser struct {
+	expression string
+	pos        int
+	current    rune
+}
+
+func (p *parser) next() {
+	p.pos++
+	if p.pos < len(p.expression) {
+		p.current = rune(p.expression[p.pos])
+	} else {
+		p.current = 0
+	}
+}
+
+func (p *parser) parse() (float64, error) {
+	p.next() 
+	result, err := p.parseExpression()
+	if err != nil {
+		return 0, err
+	}
+	if p.current != 0 {
+		return 0, errors.New("unexpected character")
+	}
+	return result, nil
+}
+
+func (p *parser) parseExpression() (float64, error) {
+	result, err := p.parseTerm()
+	if err != nil {
+		return 0, err
+	}
+
+	for p.current == '+' || p.current == '-' {
+		op := p.current
+		p.next()
+		nextTerm, err := p.parseTerm()
+		if err != nil {
+			return 0, err
+		}
+
+		if op == '+' {
+			result += nextTerm
+		} else {
+			result -= nextTerm
+		}
+	}
+	return result, nil
+}
+
+func (p *parser) parseTerm() (float64, error) {
+	result, err := p.parseFactor()
+	if err != nil {
+		return 0, err
+	}
+
+	for p.current == '*' || p.current == '/' {
+		op := p.current
+		p.next()
+		nextFactor, err := p.parseFactor()
+		if err != nil {
+			return 0, err
+		}
+
+		if op == '*' {
+			result *= nextFactor
+		} else {
+			if nextFactor == 0 {
+				return 0, errors.New("division by zero")
+			}
+			result /= nextFactor
+		}
+	}
+	return result, nil
+}
+
+func (p *parser) parseFactor() (float64, error) {
+	if p.current == '(' {
+		p.next()
+		result, err := p.parseExpression()
+		if err != nil {
+			return 0, err
+		}
+		if p.current != ')' {
+			return 0, errors.New("mismatched parentheses")
+		}
+		p.next()
+		return result, nil
+	}
+
+	startPos := p.pos
+	for (p.current >= '0' && p.current <= '9') || p.current == '.' {
+		p.next()
+	}
+	if startPos == p.pos {
+		return 0, errors.New("expected number")
+	}
+
+	value, err := strconv.ParseFloat(p.expression[startPos:p.pos], 64)
+	if err != nil {
+		return 0, errors.New("invalid number")
+	}
+
+	return value, nil
+}
+
+func Calc(expression string) (float64, error) {
+	expression = strings.ReplaceAll(expression, " ", "") 
+	p := parser{expression: expression, pos: -1}
+	return p.parse()
+}
+
+type CalculateRequest struct {
+	Expression string `json:"expression"`
+}
+
+type CalculateResponse struct {
+	Result string `json:"result"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+func main() {
+	http.HandleFunc("/api/v1/calculate", calculateHandler)
+	port := "8080"
+	fmt.Printf("Server is running on port %s\n", port)
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		fmt.Printf("Error starting server: %s\n", err)
+	}
+}
+
+func calculateHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req CalculateRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil || strings.TrimSpace(req.Expression) == "" {
+		respondWithError(w, "Expression is not valid", http.StatusUnprocessableEntity)
+		return
+	}
+
+	result, calcErr := Calc(req.Expression)
+	if calcErr != nil {
+		if calcErr.Error() == "unexpected character" || calcErr.Error() == "mismatched parentheses" ||
+			calcErr.Error() == "division by zero" || calcErr.Error() == "expected number" {
+			respondWithError(w, "Expression is not valid", http.StatusUnprocessableEntity)
+		} else {
+			respondWithError(w, "Internal server error", http.StatusInternalServerError)
+		}
+		return
+	}
+	respondWithJSON(w, CalculateResponse{Result: fmt.Sprintf("%g", result)}, http.StatusOK)
+}
+
+func respondWithError(w http.ResponseWriter, errorMessage string, statusCode int) {
+	response := ErrorResponse{Error: errorMessage}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(response)
+}
+
+func respondWithJSON(w http.ResponseWriter, data interface{}, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(data)
+}
