@@ -1,0 +1,55 @@
+package package_web
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+type CalculateResponse struct {
+	Result string `json:"result"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+func calculateHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var req CalculateRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil || strings.TrimSpace(req.Expression) == "" {
+		respondWithError(w, "Expression is not valid", http.StatusUnprocessableEntity)
+		return
+	}
+
+	result, calcErr := Calc(req.Expression)
+	if calcErr != nil {
+		if calcErr.Error() == "unexpected character" || calcErr.Error() == "mismatched parentheses" ||
+			calcErr.Error() == "division by zero" || calcErr.Error() == "expected number" {
+			respondWithError(w, "Expression is not valid", http.StatusUnprocessableEntity)
+		} else {
+			respondWithError(w, "Internal server error", http.StatusInternalServerError)
+		}
+		return
+	}
+	respondWithJSON(w, CalculateResponse{Result: fmt.Sprintf("%g", result)}, http.StatusOK)
+}
+
+func respondWithError(w http.ResponseWriter, errorMessage string, statusCode int) {
+	response := ErrorResponse{Error: errorMessage}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(response)
+}
+
+func respondWithJSON(w http.ResponseWriter, data interface{}, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(data)
+}
