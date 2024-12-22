@@ -23,7 +23,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	var req CalculateRequest
+	var req request.CalculateRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil || strings.TrimSpace(req.Expression) == "" {
 		respondWithError(w, "Expression is not valid", http.StatusUnprocessableEntity)
