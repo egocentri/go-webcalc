@@ -1,0 +1,5 @@
+package package_web
+
+type CalculateRequest struct {
+	Expression string `json:"expression" binding:"required"`
+}
