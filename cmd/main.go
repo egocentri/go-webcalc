@@ -1,14 +1,10 @@
   package last
 
-  import (
-    "net/http"
-    "github.com/egocentri/go-webcalc/package_calc/calculation.go"
+import (
+    "github.com/gin-gonic/gin"
     "github.com/egocentri/go-webcalc/package_web/handler.go"
-  func main() {
-	  http.HandleFunc("/api/v1/calculate", handler.calculateHandler)
-  	port := "8080"
-  	err := http.ListenAndServe(":"+port, nil)
-  	if err != nil {
-	  	fmt.Printf("Error starting server: %s\n", err)
-	}
-}  
+func main() {
+	a := gin.Default()
+	a.POST("/api/v1/calculate", handler.calculateHandler)
+	a.Run(":8080")
+}
