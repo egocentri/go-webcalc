@@ -4,8 +4,8 @@ A simple Go web service to evaluate arithmetic expressions. It supports addition
 Для запуска проекта выполните следующие шаги:
 1. Склонируйте репозиторий
 Откройте терминал и выполните команду:
-```git clone -b main https://github.com/egocentri/go-webcalc.git
-cd go-webcalc```
+```git clone -b main https://github.com/egocentri/go-webcalc.git```
+```cd go-webcalc```
 
 2. Перейдите в директорию с файлом webcalc
 Убедитесь, что файл webcalc находится в рабочей директории. Используйте команду:
