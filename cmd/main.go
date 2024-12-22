@@ -5,7 +5,7 @@
     "github.com/egocentri/go-webcalc/package_calc/calculation.go"
     "github.com/egocentri/go-webcalc/package_web/handler.go"
   func main() {
-	  http.HandleFunc("/api/v1/calculate", calculateHandler)
+	  http.HandleFunc("/api/v1/calculate", handler.calculateHandler)
   	port := "8080"
   	err := http.ListenAndServe(":"+port, nil)
   	if err != nil {
