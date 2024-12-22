@@ -5,7 +5,7 @@ A simple Go web service to evaluate arithmetic expressions. It supports addition
 1. Склонируйте репозиторий
 Откройте терминал и выполните команду:
 
-  ```git clone main https://github.com/egocentri/go-webcalc.git```
+  ```git clone https://github.com/egocentri/go-webcalc.git```
 
   ```cd go-webcalc```
 
