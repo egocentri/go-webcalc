@@ -19,7 +19,7 @@ A simple Go web service to evaluate arithmetic expressions. It supports addition
 4. Запустите проект
 Выполните команду:
 
-  ```go run /last/main.go```
+  ```go run ./cmd/main.go```
 
 Эта команда соберёт и запустит файл webcalc.
 
