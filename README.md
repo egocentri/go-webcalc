@@ -13,6 +13,7 @@ A simple Go web service to evaluate arithmetic expressions. It supports addition
 Убедитесь, что файл webcalc находится в рабочей директории. Используйте команду:
 
 ```ls```
+
 Если файл есть, переходите к следующему шагу.
 
 4. Запустите проект
