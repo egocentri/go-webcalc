@@ -4,9 +4,8 @@ A simple Go web service to evaluate arithmetic expressions. It supports addition
 
 1. Склонируйте репозиторий
 Откройте терминал и выполните команду:
-git clone -b main https://github.com/<username>/go-webcalc.git
+git clone -b main https://github.com/egocentri/go-webcalc.git
 cd go-webcalc
-Замените <username> на имя пользователя, которому принадлежит репозиторий.
 
 2. Перейдите в директорию с файлом webcalc
 Убедитесь, что файл webcalc находится в рабочей директории. Используйте команду:
@@ -18,36 +17,7 @@ ls
 go run ./webcalc
 Эта команда соберёт и запустит файл webcalc.
 
-
-Чтобы запустить проект для репозитория go-webcalc, ветка main, файл webcalc, выполните следующие шаги:
-
-1. Склонируйте репозиторий
-Откройте терминал и выполните команду:
-
-bash
-Copy code
-git clone -b main https://github.com/<username>/go-webcalc.git
-cd go-webcalc
-Замените <username> на имя пользователя, которому принадлежит репозиторий.
-
-2. Перейдите в директорию с файлом webcalc
-Убедитесь, что файл webcalc находится в рабочей директории. Используйте команду:
-
-bash
-Copy code
-ls
-Если файл есть, переходите к следующему шагу.
-
-3. Запустите проект
-Выполните команду:
-
-bash
-Copy code
-go run ./webcalc
-Эта команда соберёт и запустит ваш файл webcalc.
-
-4. Проверьте работу сервиса
-Сервис запустится на порту 8080. Вы увидите сообщение:
+4. Сервис запустится на порту 8080. Вы увидите сообщение:
 Server is running on port 8080
 Теперь можно отправлять запросы к серверу. Например, с помощью curl:
 Examples
